@@ -1,13 +1,20 @@
 import requests
+import sys
 
-from plotly.graph_objs import Bar
 from plotly import offline
 
 # Make an API call and store the response.
-url = 'https://api.github.com/search/repositories?q=language:python&sort=stars'
+programming_lang = input("Enter the programming language: ")
+page = input("Each page has 30 repos, choose a page:")
+url = f'https://api.github.com/search/repositories?q=language:{programming_lang}&sort=stars&page={page}'
 headers = {'Accept': 'application/vnd.github.v3+json'}
 r = requests.get(url, headers=headers)
 print(f"Status code: {r.status_code}")
+if r.status_code == 422:
+    print("There was an error with your request")
+    sys.exit()
+
+
 
 # Process results.
 response_dict = r.json()
@@ -40,7 +47,7 @@ data = [{
 }]
 
 my_layout = {
-    'title': {'text': 'Most-Starred Python Projects on Github', 'font': {'size': 20}},
+    'title': {'text': f'Most-Starred Python Projects on Github, page={page}', 'font': {'size': 20}},
     'xaxis': {
         'title': {'text': 'Repository', 'font': {'size': 24}},
         'tickfont': {'size': 14},
